@@ -11,7 +11,7 @@ if [ ! -d "$bind_dir" ]; then
 	mkdir -p "$bind_dir"
 fi
 
-if [ ${1:-4} == ".pdf" ]; then
+if [ ${1##*.} == "pdf" ]; then
 	if [ -z "$2" ]; then
 		quality=$quality
 	else
@@ -42,8 +42,7 @@ if [ ${1:-4} == ".pdf" ]; then
 		((++page)); convert "$tmp_dir/image$i.jpg" -crop "$width"x"$high"+$(echo "$width / $split_ratio" | bc)+$top "$bind_dir/page$(printf "%04d" $page).jpg"
 	done
 
-	cp $tmp_dir/image0000.jpg $bind_dir/page0000.jpg
-	convert $bind_dir/page* $1_splited.pdf
+	convert $bind_dir/page* ${1%%.*}_splited.pdf
 	rm -rf $tmp_dir
 else
 	printf "Usage: splitpage file_to_split.pdf [quality] [density] [split_ratio] [top_crop]\n"
