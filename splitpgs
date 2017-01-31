@@ -1,0 +1,45 @@
+#!/bin/bash
+
+tmp_dir="/tmp/splitpage_tmp"
+bind_dir="$tmp_dir/bind_tmp"
+quality=10 #Best between 10 to 100. Greater number can give better quality but larger file size.
+density=150 #Pixel density. Greater number can give better quality but larger file size.
+top=0 #Number of pixel to crop from top
+split_ratio=2 #Best between 2 to 2.2
+
+if [ ! -d "$bind_dir" ]; then
+	mkdir -p "$bind_dir"
+fi
+
+if [ ${1: -4} == ".pdf" ]; then
+	if [ -z "$2" ]; then
+		quality=$quality
+	else
+		quality=$2
+	fi
+	if [ -z "$3" ]; then
+		density=$density
+	else
+		density=$3
+	fi
+	if [ -z "$4" ]; then
+		split_ratio=$split_ratio
+	else
+		split_ratio=$4
+	fi
+
+	convert -quality $quality -density $density $1 $tmp_dir/image%04d.jpg
+
+	for i in `seq -f %04g 1 $(expr $(ls "$tmp_dir"/image* | wc -l) - 1)`; do
+		width=$(identify -ping -format "%w" "$tmp_dir/image$i.jpg")
+		high=$(identify -ping -format "%h" "$tmp_dir/image$i.jpg")
+		((++page)); convert "$tmp_dir/image$i.jpg" -crop "$width"x"$high"-$(echo "$width / $split_ratio" | bc)+$top "$bind_dir/page$(printf "%04d" $page).jpg"
+		((++page)); convert "$tmp_dir/image$i.jpg" -crop "$width"x"$high"+$(echo "$width / $split_ratio" | bc)+$top "$bind_dir/page$(printf "%04d" $page).jpg"
+	done
+
+	cp $tmp_dir/image0000.jpg $bind_dir/page0000.jpg
+	convert $bind_dir/page* $1_splited.pdf
+	rm -rf $tmp_dir
+else
+	echo "Usage: ./splitpage file_to_split.pdf [quality] [density] [split_ratio]"
+fi
