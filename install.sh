@@ -1,7 +1,7 @@
 #!/bin/bash
 
 curl -L -o /tmp/splitpgs.zip https://github.com/naingyeminn/splitpgs/archive/master.zip
-unzip splitpgs.zip
+unzip /tmp/splitpgs.zip -d /tmp
 echo "cp /tmp/splitpgs-master/splitpgs /usr/local/bin"
 cp /tmp/splitpgs-master/splitpgs /usr/local/bin
 echo "rm -rf /tmp/splitpgs-master"
