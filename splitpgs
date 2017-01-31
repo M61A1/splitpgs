@@ -42,6 +42,7 @@ if [ ${1##*.} == "pdf" ]; then
 		((++page)); convert "$tmp_dir/image$i.jpg" -crop "$width"x"$high"+$(echo "$width / $split_ratio" | bc)+$top "$bind_dir/page$(printf "%04d" $page).jpg"
 	done
 
+	cp $tmp_dir/image0000.jpg $bind_dir/page0000.jpg
 	convert $bind_dir/page* ${1%%.*}_splited.pdf
 	rm -rf $tmp_dir
 else
