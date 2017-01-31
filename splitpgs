@@ -27,6 +27,11 @@ if [ ${1: -4} == ".pdf" ]; then
 	else
 		split_ratio=$4
 	fi
+	if [ -z "$5" ]; then
+		top=$top
+	else
+		top=$5
+	fi
 
 	convert -quality $quality -density $density $1 $tmp_dir/image%04d.jpg
 
@@ -41,6 +46,10 @@ if [ ${1: -4} == ".pdf" ]; then
 	convert $bind_dir/page* $1_splited.pdf
 	rm -rf $tmp_dir
 else
-	echo "Usage: ./splitpage file_to_split.pdf [quality] [density] [split_ratio]"
-	echo "Default: ./splitpage file_to_split.pdf 10 150 2"
+	printf "Usage: splitpage file_to_split.pdf [quality] [density] [split_ratio] [top_crop]\n"
+	printf "\tQuality - Best between 10 to 100. Greater number can give better quality but larger file size. Default is 10.\n"
+	printf "\tDensity - Pixel density. Greater number can give better quality but larger file size. Default is 150.\n"
+	printf "\tSplit Ratio - Best between 2 to 2.2. Default is 2.\n"
+	printf "\tTop Crop - Crop top of pages. Default is 0.\n"
+	printf "Example: splitpage file_to_split.pdf 10 150 2 0\n"
 fi
