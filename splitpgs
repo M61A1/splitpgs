@@ -11,7 +11,7 @@ if [ ! -d "$bind_dir" ]; then
 	mkdir -p "$bind_dir"
 fi
 
-if [ ${1: -4} == ".pdf" ]; then
+if [ ${1:-4} == ".pdf" ]; then
 	if [ -z "$2" ]; then
 		quality=$quality
 	else
